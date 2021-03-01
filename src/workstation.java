@@ -1,7 +1,8 @@
 public class Workstation {
 
     public enum serviceType {IDLE,BUSY,OFF};
-
+    // a buffer of capacity 2 is needed here, for Component objects waiting in queue
+    
     public Workstation(int ID) {
         this.ID = ID;
         this.whichService = serviceType.OFF;
