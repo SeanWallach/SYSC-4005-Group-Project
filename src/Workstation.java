@@ -6,12 +6,19 @@ public class Workstation {
         this.ID = ID;
         this.whichService = serviceType.OFF;
     }
-
+    
     private int ID;
     private serviceType whichService;
 
-    public void assembleProduct(Component2, Component)
-    public void assembleProduct(Component1)
+    public void assembleProduct(Component1 c1) {
+    }
+    
+    public void assembleProduct(Component1 c1, Component2 c2){
+    }
+    
+    public void assembleProduct(Component1 c1, Component3 c3){
+    }    
+    
     public int getID() {
         return ID;
     }
