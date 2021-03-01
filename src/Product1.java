@@ -1,4 +1,4 @@
 public class Product1 {
-  public Product1{
+  public Product1 {
   }
 }
