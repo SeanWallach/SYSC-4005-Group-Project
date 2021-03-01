@@ -5,6 +5,4 @@ Simulation Modeling a discrete two-way buffer system.
 
 # Authors: 
 
-- Haoyu Chen
-
-- Sean Wallach
+Haoyu Chen              Sean Wallach
