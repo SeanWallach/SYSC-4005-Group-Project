@@ -1,8 +1,8 @@
-public class workstation {
+public class Workstation {
 
-    public enum serviceType {OFF,LOADER1,LOADER2,SCALE,TRAVEL,WAITING};
+    public enum serviceType {IDLE,BUSY,OFF};
 
-    public dumpTruck(int ID) {
+    public Workstation(int ID) {
         this.ID = ID;
         this.whichService = serviceType.OFF;
     }
