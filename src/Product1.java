@@ -1,4 +1,4 @@
-public class Product1 {
+public class Product1 extends Product{
   public Product1 {
   }
 }
