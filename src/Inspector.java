@@ -10,4 +10,8 @@ public class Inspector {
   public Component inspect(Component c) {
     return c;
   }
+  
+  public int getID() {
+    return this.ID;
+  }
 }
