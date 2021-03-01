@@ -11,6 +11,8 @@ public class Workstation {
     private int ID;
     private serviceType whichService;
 
+    public void assembleProduct(Component2, Component)
+    public void assembleProduct(Component1)
     public int getID() {
         return ID;
     }
