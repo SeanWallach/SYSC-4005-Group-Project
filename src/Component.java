@@ -1,7 +1,7 @@
 // Superclass of all components
 public class Component {
   
-  public enum serviceType {OFF,INSPECTOR1,INSPECTOR2,WORKSTATION1,WORKSTATION2,WORKSTATION3,TRAVEL,WAITING};
+  public enum serviceType {OFF,INSPECTOR1,INSPECTOR2,WORKSTATION1,WORKSTATION2,WORKSTATION3,BUFFER1,BUFFER2,WAITING};
   
   public Component(int ID) {
     this.ID = ID
