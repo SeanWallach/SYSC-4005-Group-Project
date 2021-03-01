@@ -1,7 +1,7 @@
 // Superclass of all products
 public class Product {
   
-  public enum serviceType {OFF,TRAVEL,WAITING};
+  public enum serviceType {OFF,TRAVEL,WAITING,WORKSTATION1,WORKSTATION2,WORKSTATION3};
   
   public Product(int ID) {
     this.ID = ID
