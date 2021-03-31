@@ -1,6 +1,6 @@
 # SYSC 4005 Group Project
 ### To Haoyu:
-Clone the porject, open it with Intelij
+Clone the project, open it with Intelij
 
 Use git to make your own branch for development
 
