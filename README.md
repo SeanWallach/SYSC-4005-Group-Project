@@ -1,5 +1,5 @@
 # SYSC 4005 Group Project
-###To Haoyu:
+### To Haoyu:
 Clone the porject, open it with Intelij
 Use git to make your own branch for development
 Once you are done your branch (AND IT RUNS OK), then you can "git push" to this directory
