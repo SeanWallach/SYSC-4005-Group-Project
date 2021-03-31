@@ -1,10 +1,10 @@
-// Superclass of all products
-public class Product {
+// Superclass of all components
+public class Component {
   
-  public enum serviceType {OFF,TRAVEL,WAITING,WORKSTATION1,WORKSTATION2,WORKSTATION3};
+  public enum serviceType {OFF,INSPECTOR1,INSPECTOR2,WORKSTATION1,WORKSTATION2,WORKSTATION3,BUFFER1,BUFFER2,WAITING};
   
-  public Product(int ID) {
-    this.ID = ID
+  public Component(int ID) {
+    this.ID = ID;
     this.whichService = serviceType.OFF;
   }
   
@@ -12,7 +12,7 @@ public class Product {
   private serviceType whichService;
   
   public int getID() {
-        return ID;
+      return ID;
   }
 
   public void setID(int ID) {
