@@ -52,8 +52,8 @@ public class SimModel {
         System.out.print("Initial state of the simulation\n");
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
 
-        Component1 .setWhichService(Component.serviceType.INSPECTOR1);
-        Component2 .setWhichService(Component.serviceType.INSPECTOR2);
+        Component1.setWhichService(Component.serviceType.INSPECTOR1);
+        Component2.setWhichService(Component.serviceType.INSPECTOR2);
 
 
         // Creating the first event (if needed)
