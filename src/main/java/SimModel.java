@@ -4,6 +4,7 @@ public class SimModel {
     // Declaration of Simulation Methods
 
     // Simulation Model Variables
+    public static int Clock;
     private static Queue<SimEvent> FEL;                                             // This is the FEL
     public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1,I2;             // Queue lines for the buffer unit
     private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
@@ -15,17 +16,6 @@ public class SimModel {
     public static double[][] ws1 = {{3,0.49},{12,0.92},{30,1}};
     public static double[][] ws2 = {{3,0.26},{12,0.69},{30,0.91},{60,1}};
     public static double[][] ws3 = {{3,0.26},{12,0.75},{30,0.96},{54,1}};
-
-    FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
-    W1C1Q = new LinkedList<>();
-    W2C1Q = new LinkedList<>();
-    W2C2Q = new LinkedList<>();
-    W3C1Q = new LinkedList<>();
-    W3C3Q = new LinkedList<>();
-    I1Q = new LinkedList<>();
-    I2Q = new LinkedList<>();
-
-
 
     public SimModel() {
         Initialization();
@@ -45,6 +35,17 @@ public class SimModel {
     }
 
     private static void Initialization() {
+        FEL = new PriorityQueue<SimEvent>();            // Initializing the FEL and waiting queues
+        W1C1Q = new LinkedList<>();
+        W2C1Q = new LinkedList<>();
+        W2C2Q = new LinkedList<>();
+        W3C1Q = new LinkedList<>();
+        W3C3Q = new LinkedList<>();
+        I1Q = new LinkedList<>();
+        I2Q = new LinkedList<>();
+
+        Clock = 0;
+
         // Creating workstations
         Workstation W1 = new Workstation(1);
         Workstation W2 = new Workstation(2);
@@ -62,9 +63,8 @@ public class SimModel {
         System.out.print("Initial state of the simulation\n");
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
 
-        Component1 .setWhichService(Component.serviceType.INSPECTOR1)
-        Component2 .setWhichService(Component.serviceType.INSPECTOR2)
-
+        Component1.setWhichService(Component.serviceType.INSPECTOR1);
+        Component2.setWhichService(Component.serviceType.INSPECTOR2);
 
         // Creating the first event (if needed)
         //SimEvent first = new SimEvent(SimEvent.eventType.ALQ,getRandomTime())
@@ -110,6 +110,7 @@ public class SimModel {
                 }
             }
         }
+        ScheduleEvent(SimEvent.eventType.AI,evt.getComponent());
     }
 
     private static ProcessEI(SimEvent evt){
@@ -148,14 +149,40 @@ public class SimModel {
             } else {
                 evt.getComponent().setWhichService(Component.serviceType.WAITING);
             }
-
         }
+    }
+
+    // Schedules events with their components
+    private static void ScheduleEvent(SimEvent.eventType type, Component component) {
+        Integer newRN = -1;
+        switch (type) {
+            case AI:
+//                newRN = getRandomTime(TTD,RNGtravel);   // These need to be changed
+//                break;
+//            case EI:
+//                newRN = getRandomTime(LTD,RNGloading); // These need to be changed
+//                break;
+//            case AW:
+//                newRN = getRandomTime(WTD,RNGscale);     // These need to be changed
+//                break;
+            case EW:
+                //newRN = getRandomTime();
+        }
+        checkSimDay(newRN);
+        SimEvent newEVT = new SimEvent(type,Clock+newRN, component, null);
+        System.out.print(" => new event = " + newEVT.geteType() + " time " + newEVT.geteTime() + " truck " + newEVT.getComponent().getID());
+        FEL.offer(newEVT);
+    }
+
+    private static void checkSimDay(Integer newRN) {
+
     }
 
     // Generate the report
     //
     private static void GenerateReport() {
-
+        System.out.print("\n-----------------------------------------------------------\n");
+        System.out.print("Statistics\n");
     }
 }
 
