@@ -10,7 +10,11 @@ public class SimEvent implements Comparable<SimEvent>{
     private Component componentID;   // which component is this event for
     private Product productID;  // which product is this event for
 
-    public SimEvent () {
+    public SimEvent (eventType eType, int eTime, Component componentID, Inspector inspectorID) {
+        this.eType = eType;
+        this.eTime = eTime;
+        this.componentID = componentID;
+        this.inspectorID = inspectorID;
     }
 
     public eventType geteType() {
@@ -44,4 +48,8 @@ public class SimEvent implements Comparable<SimEvent>{
     public void setProductID(Product product) {
       this.productID = product;
   }
+
+    public Inspector inspectorID() {
+        return inspectorID;
+    }
 }
