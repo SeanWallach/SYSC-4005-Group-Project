@@ -2,7 +2,7 @@ public class SimEvent implements Comparable<SimEvent>{
 
     @Override
     public int compareTo(SimEvent o) {
-        return this.geteTime().compareTo(o.geteTime());
+        return 0;
     }
     public static enum eventType {AI,EI,AW,EW};  // AI - arrive at Inspector    EI - end inspect    AW - arrive at workstation   EW - depart workstation
     private eventType eType;
