@@ -7,14 +7,16 @@ public class SimEvent implements Comparable<SimEvent>{
     public static enum eventType {AI,EI,AW,EW};  // AI - arrive at Inspector    EI - end inspect    AW - arrive at workstation   EW - depart workstation
     private eventType eType;
     private Integer eTime;           // Event time
-    private Component componentID;   // which component is this event for
-    private Product productID;  // which product is this event for
+    private Component component;   // which component is this event for
+    private Product product;  // which product is this event for
+    private Inspector inspector;
 
-    public SimEvent (eventType eType, int eTime, Component componentID, Inspector inspectorID) {
+    public SimEvent (eventType eType, int eTime, int componentID, int inspectorID) {
         this.eType = eType;
         this.eTime = eTime;
-        this.componentID = componentID;
-        this.inspectorID = inspectorID;
+        this.component = component;
+        this.inspector = inspector;
+        this.product = product;
     }
 
     public eventType geteType() {
@@ -33,23 +35,23 @@ public class SimEvent implements Comparable<SimEvent>{
       this.eTime = eTime;
     }
 
-    public Component getComponentID() {
-      return componentID;
+    public Component getComponent() {
+      return component;
     }
 
-    public void setComponentID(Component component) {
-      this.componentID = component;
+    public void setComponent(Component component) {
+      this.component = component;
     }
 
-    public Product getProductID() {
-      return productID;
+    public Product getProduct() {
+      return product;
     }
 
-    public void setProductID(Product product) {
-      this.productID = product;
+    public void setProduct(Product product) {
+      this.product = product;
   }
 
-    public Inspector inspectorID() {
-        return inspectorID;
+    public Inspector getInspector() {
+        return inspector;
     }
 }
