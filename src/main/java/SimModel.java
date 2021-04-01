@@ -4,6 +4,8 @@ public class SimModel {
     // Declaration of Simulation Methods
 
     // Simulation Model Variables
+    public static int Clock
+    public static int LastI1IdleTime, LastI2IdleTime
     private static Queue<SimEvent> FEL;                                             // This is the FEL
     public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1,I2;             // Queue lines for the buffer unit
     private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
@@ -16,16 +18,8 @@ public class SimModel {
     public static double[][] ws2 = {{3,0.26},{12,0.69},{30,0.91},{60,1}};
     public static double[][] ws3 = {{3,0.26},{12,0.75},{30,0.96},{54,1}};
 
-    FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
-    W1C1Q = new LinkedList<>();
-    W2C1Q = new LinkedList<>();
-    W2C2Q = new LinkedList<>();
-    W3C1Q = new LinkedList<>();
-    W3C3Q = new LinkedList<>();
-    I1Q = new LinkedList<>();
-    I2Q = new LinkedList<>();
-
-
+    private static double BI, BW;                                           // Total busy time for the two inspectors and the workstations, respectively
+    private static double UI, UW;                                           // Utilization for the two inspectors and the workstations, respectively
 
     public SimModel() {
         Initialization();
@@ -45,6 +39,25 @@ public class SimModel {
     }
 
     private static void Initialization() {
+        Clock = 0;
+        LastI1IdleTime = 0;
+        LastI2IdleTime = 0;
+
+
+        BL = 0.0;
+        BS = 0.0;
+        UL = 0.0;
+        US = 0.0;
+
+
+        FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
+        W1C1Q = new LinkedList<>();
+        W2C1Q = new LinkedList<>();
+        W2C2Q = new LinkedList<>();
+        W3C1Q = new LinkedList<>();
+        W3C3Q = new LinkedList<>();
+        I1Q = new LinkedList<>();
+        I2Q = new LinkedList<>();
         // Creating workstations
         Workstation W1 = new Workstation(1);
         Workstation W2 = new Workstation(2);
@@ -93,8 +106,9 @@ public class SimModel {
                     evt.getComponent().setWhichService(Component.serviceType.WAITING);
                     I1Q.offer(evt.getComponent())  ;
                 }else {
-                    isI1Busy = True;
+                    isI1Busy = true;
                     evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1);
+                    LastI1IdleTime = Clock;
                     ScheduleEvent(SimEvent.eventType.EI,evt.getComponentID());
                 }
             }
@@ -104,31 +118,28 @@ public class SimModel {
                     evt.getComponent().setWhichService(Component.serviceType.WAITING);
                     I1Q.offer(evt.getComponent());
                 } else {
-                    isI2Busy = True;
+                    isI2Busy = true;
                     evt.getComponent().setWhichService(Component.serviceType.INSPECTOR2);
+                    LastI2IdleTime = Clock;
                     ScheduleEvent(SimEvent.eventType.EI, evt.getComponent());
                 }
             }
         }
+
     }
 
     private static ProcessEI(SimEvent evt){
         System.out.print(" event = Component " + evt.getComponentID().getID() + "leaves Inspector" + evt.getInspectorID().getID());
-        Component.serviceType currentService = evt.getComponent().getWhichService();
-        Component moving = LinkedList.poll();
+
         if (evt.getComponent().getID() == 1) {
             if (W1C1Q.size() < 2){
-                if (W1C1Q.size() == 0){
-
-                }else {
-                    W1C1Q.offer(evt.getComponent())
+                    W1C1Q.offer(evt.getComponent());
                     evt.getComponent().setWhichService(Component.serviceType.BUFFER1);
-                }
             } else if (W1C1Q.size() == 2 && W2C1Q.size() < 2) {
-                W2C1Q.offer(evt.getComponent())
+                W2C1Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER21);
             } else if (W1C1Q.size() == 2 && W2C1Q.size() == 2 && W3C1Q.size() < 2) {
-                W3C1Q.offer(evt.getComponent())
+                W3C1Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER31);
             } else {
                 evt.getComponent().setWhichService(Component.serviceType.WAITING);
@@ -136,26 +147,82 @@ public class SimModel {
 
         } else if (evt.getComponent().getID() == 2) {
             if (W2C2Q.size() < 2){
-                W2C2Q.offer(evt.getComponent())
+                W2C2Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER22);
             } else {
                 evt.getComponent().setWhichService(Component.serviceType.WAITING);
             }
         } else {
             if (W2C2Q.size() < 2){
-                W2C2Q.offer(evt.getComponent())
+                W2C2Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER22);
             } else {
                 evt.getComponent().setWhichService(Component.serviceType.WAITING);
             }
 
         }
+
+        // Moving the next component from In to the idle loader, or set the loader status to idle if the queue is empty.
+        Component.serviceType currentService = evt.getComponent().getWhichService();
+        Component movingI1Q = I1Q.poll();
+        if (currentService == Component.serviceType.INSPECTOR1){
+            if (!I1Q.isEmpty()) {
+                isI1Busy = True;
+                movingI1Q.setWhichService(Component.serviceType.INSPECTOR1);
+            }  else {
+                BI += Clock - LastI1IdleTime;
+                isL1Busy=false;
+            }
+        } else if (currentService == Component.serviceType.INSPECTOR2){
+            if (!I2Q.isEmpty()) {
+                isI2Busy = True;
+                movingI2Q.setWhichService(Component.serviceType.INSPECTOR2);
+            } else {
+                BI += Clock - LastI2IdleTime;
+                isL2Busy=false;
+            }
+        } else {
+            break;
+        }
+    }
+
+
+
+    // Schedules events with their components
+    private static void ScheduleEvent(SimEvent.eventType type, Component component) {
+        Integer newRN = -1;
+        switch (type) {
+            case AI:
+//                newRN = getRandomTime(TTD,RNGtravel);   // These need to be changed
+//                break;
+//            case EI:
+//                newRN = getRandomTime(LTD,RNGloading); // These need to be changed
+//                break;
+//            case AW:
+//                newRN = getRandomTime(WTD,RNGscale);     // These need to be changed
+//                break;
+            case EW:
+                //newRN = getRandomTime();
+        }
+        checkSimDay(newRN);
+        SimEvent newEVT = new SimEvent(type,Clock+newRN, component, null);
+        System.out.print(" => new event = " + newEVT.geteType() + " time " + newEVT.geteTime() + " truck " + newEVT.getComponent().getID());
+        FEL.offer(newEVT);
+    }
+
+    private static void checkSimDay(Integer newRN) {
     }
 
     // Generate the report
     //
     private static void GenerateReport() {
+        UL = (BL/Clock)*100;
+        US = (BS/Clock)*100;
 
+        System.out.print("\n-----------------------------------------------------------\n");
+        System.out.print("Statistics\n");
+        System.out.print("Loaders Utilization = " + UL + "\n");
+        System.out.print("Scale Utilization = " + US + "\n");
     }
 }
 
