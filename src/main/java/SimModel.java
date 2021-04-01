@@ -75,9 +75,8 @@ public class SimModel {
         System.out.print("Initial state of the simulation\n");
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
 
-        Component1 .setWhichService(Component.serviceType.INSPECTOR1)
-        Component2 .setWhichService(Component.serviceType.INSPECTOR2)
-
+        Component1.setWhichService(Component.serviceType.INSPECTOR1);
+        Component2.setWhichService(Component.serviceType.INSPECTOR2);
 
         // Creating the first event (if needed)
         //SimEvent first = new SimEvent(SimEvent.eventType.ALQ,getRandomTime())
@@ -125,7 +124,6 @@ public class SimModel {
                 }
             }
         }
-
     }
 
     private static ProcessEI(SimEvent evt){
@@ -216,13 +214,13 @@ public class SimModel {
     // Generate the report
     //
     private static void GenerateReport() {
-        UL = (BL/Clock)*100;
-        US = (BS/Clock)*100;
+        UI = (BI/Clock)*100;
+        UW = (BW/Clock)*100;
 
         System.out.print("\n-----------------------------------------------------------\n");
         System.out.print("Statistics\n");
-        System.out.print("Loaders Utilization = " + UL + "\n");
-        System.out.print("Scale Utilization = " + US + "\n");
+        System.out.print("Inspectors Utilization = " + UI + "\n");
+        System.out.print("Workstation Utilization = " + UW + "\n");
     }
 }
 

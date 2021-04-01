@@ -9,9 +9,9 @@ public class SimEvent implements Comparable<SimEvent>{
     private Integer eTime;           // Event time
     private Component component;   // which component is this event for
     private Product product;  // which product is this event for
-    private Inspector inspector;
+    private Inspector inspector;  // which inspector is this event for
 
-    public SimEvent (eventType eType, int eTime, Component componentID, int inspectorID) {
+    public SimEvent (eventType eType, int eTime, Component componentID, Inspector inspectorID) {
         this.eType = eType;
         this.eTime = eTime;
         this.component = component;
