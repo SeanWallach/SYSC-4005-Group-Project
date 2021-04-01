@@ -5,9 +5,9 @@ public class SimModel {
 
     // Simulation Model Variables
     public static int Clock
-    public static int LastI1IdleTime, LastI2IdleTime
+    public static int LastI1IdleTime, LastI2IdleTime                                // Record the last idle time
     private static Queue<SimEvent> FEL;                                             // This is the FEL
-    public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1,I2;             // Queue lines for the buffer unit
+    public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1Q,I2Q;             // Queue lines for the buffer unit
     private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
     private static boolean isI1Busy, isI2Busy;
     // Inputs
@@ -43,12 +43,10 @@ public class SimModel {
         LastI1IdleTime = 0;
         LastI2IdleTime = 0;
 
-
-        BL = 0.0;
-        BS = 0.0;
-        UL = 0.0;
-        US = 0.0;
-
+        BI = 0.0;
+        BW = 0.0;
+        UI = 0.0;
+        UW = 0.0;
 
         FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
         W1C1Q = new LinkedList<>();
@@ -165,11 +163,11 @@ public class SimModel {
         Component movingI1Q = I1Q.poll();
         if (currentService == Component.serviceType.INSPECTOR1){
             if (!I1Q.isEmpty()) {
-                isI1Busy = True;
+                isI1Busy = true;
                 movingI1Q.setWhichService(Component.serviceType.INSPECTOR1);
             }  else {
                 BI += Clock - LastI1IdleTime;
-                isL1Busy=false;
+                isI1Busy=false;
             }
         } else if (currentService == Component.serviceType.INSPECTOR2){
             if (!I2Q.isEmpty()) {
@@ -177,7 +175,7 @@ public class SimModel {
                 movingI2Q.setWhichService(Component.serviceType.INSPECTOR2);
             } else {
                 BI += Clock - LastI2IdleTime;
-                isL2Busy=false;
+                isI2Busy=false;
             }
         } else {
             break;
