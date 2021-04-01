@@ -183,7 +183,6 @@ public class SimModel {
     }
 
 
-
     // Schedules events with their components
     private static void ScheduleEvent(SimEvent.eventType type, Component component) {
         Integer newRN = -1;
