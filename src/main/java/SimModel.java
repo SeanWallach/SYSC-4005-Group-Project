@@ -10,9 +10,9 @@ public class SimModel {
     private static boolean isI1Busy, isI2Busy;
     // Inputs
     public static double[][] servinp1 = {{5,0.35},{15,0.78},{25,0.93},{50,0.99},{80,1}};
-    public static double[][] servinp22= {{5,0.22},{15,0.61},{25,0.81},{50,0.7},{115,1}};
-    public static double[][] servinp23= {{5,0.19},{15,0.49},{25,0.71},{50,0.92},{105,1}};
-    public static double[][] ws1 = {{3,0.49},{12,0.92},{30,1};
+    public static double[][] servinp2 = {{5,0.22},{15,0.61},{25,0.81},{50,0.7},{115,1}};
+    public static double[][] servinp3 = {{5,0.19},{15,0.49},{25,0.71},{50,0.92},{105,1}};
+    public static double[][] ws1 = {{3,0.49},{12,0.92},{30,1}};
     public static double[][] ws2 = {{3,0.26},{12,0.69},{30,0.91},{60,1}};
     public static double[][] ws3 = {{3,0.26},{12,0.75},{30,0.96},{54,1}};
 
@@ -60,8 +60,8 @@ public class SimModel {
         System.out.print("Initial state of the simulation\n");
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
 
-        Component1 .setWhichService(Component.serviceType.INSPECTOR1)
-        Component2 .setWhichService(Component.serviceType.INSPECTOR2)
+        Component1 .setWhichService(Component.serviceType.INSPECTOR1);
+        Component2 .setWhichService(Component.serviceType.INSPECTOR2);
 
 
         // Creating the first event (if needed)
@@ -71,7 +71,7 @@ public class SimModel {
 
     //Main function
     //
-    public static void main() {
+    public static void main(String [] args) {
         Initialization();
         GenerateReport();
     }
@@ -83,27 +83,28 @@ public class SimModel {
     }
 
     private static void ProcessAI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponentID().getID() + "arrives at Inspector" + evt.getInspectorID().getID());
+        System.out.print(" event = Component " + evt.getComponent().getID() + "arrives at Inspector" + evt.getInspector().getID());
         // if component 1, sent to inspector 1; else, sent to inspector2
-        if (evt.getComponentID().getID() == 1){
+
+        if (evt.getComponent().getID() == 1){
             if ((I1.isEmpty()) && !isI1Busy) {
                 isI1Busy = True
-                evt.getComponentID().setWhichService(Component.serviceType.INSPECTOR1)
+                evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1)
             } else if (isI1Busy){
 
             }
         } else{
-            evt.getComponentID().setWhichService(Component.serviceType.INSPECTOR2)
+            evt.getComponent().setWhichService(Component.serviceType.INSPECTOR2);
         }
         ScheduleEvent(SimEvent.eventType.AI,evt.getComponentID())
 
     }
 
-    private static ProcessEI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponentID().getID() + "leaves Inspector" + evt.getInspectorID().getID());
-        if ()
+    private void ProcessEI(SimEvent evt){
+        System.out.print(" event = Component " + evt.getComponent().getID() + "leaves Inspector" + evt.getInspector().getID());
+        //if ()
     }
-}
+
 
     // Generate the report
     //
