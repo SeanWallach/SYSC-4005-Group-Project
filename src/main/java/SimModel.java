@@ -41,8 +41,8 @@ public class SimModel {
         W2C2Q = new LinkedList<>();
         W3C1Q = new LinkedList<>();
         W3C3Q = new LinkedList<>();
-        I1 = new LinkedList<>();
-        I2 = new LinkedList<>();
+        I1Q = new LinkedList<>();
+        I2Q = new LinkedList<>();
 
         Clock = 0;
 
@@ -66,7 +66,6 @@ public class SimModel {
         Component1.setWhichService(Component.serviceType.INSPECTOR1);
         Component2.setWhichService(Component.serviceType.INSPECTOR2);
 
-
         // Creating the first event (if needed)
         //SimEvent first = new SimEvent(SimEvent.eventType.ALQ,getRandomTime())
     }
@@ -88,24 +87,69 @@ public class SimModel {
     private static void ProcessAI(SimEvent evt){
         System.out.print(" event = Component " + evt.getComponent().getID() + "arrives at Inspector" + evt.getInspector().getID());
         // if component 1, sent to inspector 1; else, sent to inspector2
-
         if (evt.getComponent().getID() == 1){
-            if ((I1.isEmpty()) && !isI1Busy) {
-                isI1Busy = true;
-                evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1);
-            } else if (isI1Busy){
-
+            if ((I1Q.isEmpty()) && !isI1Busy) {
+                if (isI1Busy){
+                    evt.getComponent().setWhichService(Component.serviceType.WAITING);
+                    I1Q.offer(evt.getComponent())  ;
+                }else {
+                    isI1Busy = True;
+                    evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1);
+                    ScheduleEvent(SimEvent.eventType.EI,evt.getComponentID());
+                }
             }
-        } else{
-            evt.getComponent().setWhichService(Component.serviceType.INSPECTOR2);
+        } else {
+            if ((I2Q.isEmpty()) && !isI2Busy) {
+                if (isI2Busy) {
+                    evt.getComponent().setWhichService(Component.serviceType.WAITING);
+                    I1Q.offer(evt.getComponent());
+                } else {
+                    isI2Busy = True;
+                    evt.getComponent().setWhichService(Component.serviceType.INSPECTOR2);
+                    ScheduleEvent(SimEvent.eventType.EI, evt.getComponent());
+                }
+            }
         }
         ScheduleEvent(SimEvent.eventType.AI,evt.getComponent());
-
     }
 
-    private void ProcessEI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponent().getID() + "leaves Inspector" + evt.getInspector().getID());
-        //if ()
+    private static ProcessEI(SimEvent evt){
+        System.out.print(" event = Component " + evt.getComponentID().getID() + "leaves Inspector" + evt.getInspectorID().getID());
+        Component.serviceType currentService = evt.getComponent().getWhichService();
+        Component moving = LinkedList.poll();
+        if (evt.getComponent().getID() == 1) {
+            if (W1C1Q.size() < 2){
+                if (W1C1Q.size() == 0){
+
+                }else {
+                    W1C1Q.offer(evt.getComponent())
+                    evt.getComponent().setWhichService(Component.serviceType.BUFFER1);
+                }
+            } else if (W1C1Q.size() == 2 && W2C1Q.size() < 2) {
+                W2C1Q.offer(evt.getComponent())
+                evt.getComponent().setWhichService(Component.serviceType.BUFFER21);
+            } else if (W1C1Q.size() == 2 && W2C1Q.size() == 2 && W3C1Q.size() < 2) {
+                W3C1Q.offer(evt.getComponent())
+                evt.getComponent().setWhichService(Component.serviceType.BUFFER31);
+            } else {
+                evt.getComponent().setWhichService(Component.serviceType.WAITING);
+            }
+
+        } else if (evt.getComponent().getID() == 2) {
+            if (W2C2Q.size() < 2){
+                W2C2Q.offer(evt.getComponent())
+                evt.getComponent().setWhichService(Component.serviceType.BUFFER22);
+            } else {
+                evt.getComponent().setWhichService(Component.serviceType.WAITING);
+            }
+        } else {
+            if (W2C2Q.size() < 2){
+                W2C2Q.offer(evt.getComponent())
+                evt.getComponent().setWhichService(Component.serviceType.BUFFER22);
+            } else {
+                evt.getComponent().setWhichService(Component.serviceType.WAITING);
+            }
+        }
     }
 
     // Schedules events with their components
@@ -131,6 +175,7 @@ public class SimModel {
     }
 
     private static void checkSimDay(Integer newRN) {
+
     }
 
     // Generate the report
