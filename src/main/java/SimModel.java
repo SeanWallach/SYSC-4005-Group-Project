@@ -5,9 +5,9 @@ public class SimModel {
 
     // Simulation Model Variables
     private static Queue<SimEvent> FEL;                                             // This is the FEL
-    public static Queue<Workstation> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q;             // Queue lines for the buffer unit
-    private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy;
-
+    public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1,I2;             // Queue lines for the buffer unit
+    private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
+    private static boolean isI1Busy, isI2Busy;
     // Inputs
     public static double[][] servinp1 = {{5,0.35},{15,0.78},{25,0.93},{50,0.99},{80,1}};
     public static double[][] servinp2 = {{5,0.22},{15,0.61},{25,0.81},{50,0.7},{115,1}};
@@ -16,6 +16,14 @@ public class SimModel {
     public static double[][] ws2 = {{3,0.26},{12,0.69},{30,0.91},{60,1}};
     public static double[][] ws3 = {{3,0.26},{12,0.75},{30,0.96},{54,1}};
 
+    FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
+    W1C1Q = new LinkedList<>();
+    W2C1Q = new LinkedList<>();
+    W2C2Q = new LinkedList<>();
+    W3C1Q = new LinkedList<>();
+    W3C3Q = new LinkedList<>();
+    I1 = new LinkedList<>();
+    I2 = new LinkedList<>();
 
     public SimModel() {
         Initialization();
@@ -77,11 +85,19 @@ public class SimModel {
     private static void ProcessAI(SimEvent evt){
         System.out.print(" event = Component " + evt.getComponent().getID() + "arrives at Inspector" + evt.getInspector().getID());
         // if component 1, sent to inspector 1; else, sent to inspector2
+
         if (evt.getComponent().getID() == 1){
-            evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1);
+            if ((I1.isEmpty()) && !isI1Busy) {
+                isI1Busy = True
+                evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1)
+            } else if (isI1Busy){
+
+            }
         } else{
             evt.getComponent().setWhichService(Component.serviceType.INSPECTOR2);
         }
+        ScheduleEvent(SimEvent.eventType.AI,evt.getComponentID())
+
     }
 
     private void ProcessEI(SimEvent evt){
@@ -96,5 +112,7 @@ public class SimModel {
 
     }
 }
+
+
 
  
