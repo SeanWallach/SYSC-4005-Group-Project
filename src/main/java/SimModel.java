@@ -50,7 +50,7 @@ public class SimModel {
         workdayHours = 8;
         LastI1IdleTime = 0;
         LastI2IdleTime = 0;
-        simDays = 10; // For now
+        simDays = 10;           // For now
 
         BI = 0.0;
         BW = 0.0;
@@ -75,9 +75,9 @@ public class SimModel {
         Inspector INSPECTOR1 = new Inspector(1);
         Inspector INSPECTOR2 = new Inspector(2);
         // Creating Components
-        Component Component1 = new Component(1);
-        Component Component2 = new Component(2);
-        Component Component3 = new Component(3);
+        Component component1 = new Component(1);
+        Component component2 = new Component(2);
+        Component component3 = new Component(3);
 
         // set up any other initial settings here ;)
         System.out.print("\n-----------------------------------------------------------\n");
@@ -85,8 +85,9 @@ public class SimModel {
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
         System.out.print("Component2 at Inspector2, but no components in the buffers yet.\n");
 
-        Component1.setWhichService(Component.serviceType.INSPECTOR1);
-        Component2.setWhichService(Component.serviceType.INSPECTOR2);
+        component1.setWhichService(Component.serviceType.INSPECTOR1);
+        component2.setWhichService(Component.serviceType.INSPECTOR2);
+        component3.setWhichService(Component.serviceType.WAITING);
 
         // Creating the first event (if needed)
         //SimEvent first = new SimEvent(SimEvent.eventType.ALQ,getRandomTime())
@@ -117,9 +118,9 @@ public class SimModel {
     }
 
     private static void ProcessAI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponent().getID() + "arrives at Inspector" + evt.getInspector().getID());
+        System.out.print(" event = Component " + evt.getComponent().getType() + "arrives at Inspector" + evt.getInspector().getID());
         // if component 1, sent to inspector 1; else, sent to inspector2
-        if (evt.getComponent().getID() == 1){
+        if (evt.getComponent().getType() == 1){
             if ((I1Q.isEmpty()) && !isI1Busy) {
                 if (isI1Busy){
                     evt.getComponent().setWhichService(Component.serviceType.WAITING);
@@ -147,9 +148,9 @@ public class SimModel {
     }
 
     private static void ProcessEI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponent().getID() + "leaves Inspector" + evt.getInspector().getID());
+        System.out.print(" event = Component " + evt.getComponent().getType() + "leaves Inspector" + evt.getInspector().getID());
 
-        if (evt.getComponent().getID() == 1) {
+        if (evt.getComponent().getType() == 1) {
             if (W1C1Q.size() < 2){
                     W1C1Q.offer(evt.getComponent());
                     evt.getComponent().setWhichService(Component.serviceType.BUFFER11);
@@ -163,7 +164,7 @@ public class SimModel {
                 evt.getComponent().setWhichService(Component.serviceType.WAITING);
             }
 
-        } else if (evt.getComponent().getID() == 2) {
+        } else if (evt.getComponent().getType() == 2) {
             if (W2C2Q.size() < 2){
                 W2C2Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER22);
@@ -216,20 +217,29 @@ public class SimModel {
         Integer newRN = -1;
         switch (type) {
             case AI: // Arrive at Inspector
-                newRN = getRandomTime(servinp1,RNGInspectionComponent1);   // These need to be changed
+                if (component.getType() == 1) {
+                    newRN = getRandomTime(servinp1,RNGInspectionComponent1);
+                } else if (component.getType() == 2) {
+                    newRN = getRandomTime(servinp2,RNGInspectionComponent2);
+                } else if (component.getType() == 3) {
+                    newRN = getRandomTime(servinp1, RNGInspectionComponent3);
+                }
                 break;
             case EI: // End Inspection
+                System.out.println("got to End Inspection");
               //  newRN = getRandomTime(LTD,RNGloading); // These need to be changed
                 break;
             case AW: // Arrive at Workstation
+                System.out.println("got to Arrive at workstation");
               //  newRN = getRandomTime(WTD,RNGscale);     // These need to be changed
                 break;
             case EW: // End Workstation
+                System.out.println("got to End workstation");
                 //newRN = getRandomTime();
         }
         checkSimDay(newRN);
         SimEvent newEVT = new SimEvent(type,Clock+newRN, component, null);
-        System.out.print(" => new event = " + newEVT.geteType() + " time " + newEVT.geteTime() + " truck " + newEVT.getComponent().getID());
+        System.out.print(" => new event = " + newEVT.geteType() + " time " + newEVT.geteTime() + " Component type  " + newEVT.getComponent().getType());
         FEL.offer(newEVT);
     }
 
@@ -254,6 +264,11 @@ public class SimModel {
 
     // Not implemented yet
     private static void checkSimDay(Integer newRN) {
+        if (((Clock/(workdayHours*60)) + 1) > currentDay) {
+            currentDay = (Clock/(workdayHours*60)) + 1;
+            System.out.print("\n-----------------------------------------------------------\n");
+            System.out.print("Day " + currentDay +"\n");
+        }
     }
 
     // Generate the report
