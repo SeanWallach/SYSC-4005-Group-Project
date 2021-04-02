@@ -6,9 +6,9 @@ public class SimModel {
     // Simulation Model Variables
     public static int Clock;
     public static Random RNGInspectionComponent1, RNGInspectionComponent2, RNGInspectionComponent3,RNGWorkstation1,RNGWorkstation2,RNGWorkstation3;      // Variables for random numbers generated for each event
-    public static int LastI1IdleTime, LastI2IdleTime
+    public static int LastI1IdleTime, LastI2IdleTime;
     private static Queue<SimEvent> FEL;                                             // This is the FEL
-    public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1Q,IQ2;         // Queue lines for the buffer unit
+    public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1Q,I2Q;         // Queue lines for the buffer unit
     private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
     private static boolean isI1Busy, isI2Busy;
 
@@ -118,7 +118,7 @@ public class SimModel {
                     isI1Busy = true;
                     evt.getComponent().setWhichService(Component.serviceType.INSPECTOR1);
                     LastI1IdleTime = Clock;
-                    ScheduleEvent(SimEvent.eventType.EI,evt.getComponentID());
+                    ScheduleEvent(SimEvent.eventType.EI,evt.getComponent());
                 }
             }
         } else {
@@ -136,13 +136,13 @@ public class SimModel {
         }
     }
 
-    private static ProcessEI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponentID().getID() + "leaves Inspector" + evt.getInspectorID().getID());
+    private static void ProcessEI(SimEvent evt){
+        System.out.print(" event = Component " + evt.getComponent().getID() + "leaves Inspector" + evt.getInspector().getID());
 
         if (evt.getComponent().getID() == 1) {
             if (W1C1Q.size() < 2){
                     W1C1Q.offer(evt.getComponent());
-                    evt.getComponent().setWhichService(Component.serviceType.BUFFER1);
+                    evt.getComponent().setWhichService(Component.serviceType.BUFFER11);
             } else if (W1C1Q.size() == 2 && W2C1Q.size() < 2) {
                 W2C1Q.offer(evt.getComponent());
                 evt.getComponent().setWhichService(Component.serviceType.BUFFER21);
@@ -173,6 +173,7 @@ public class SimModel {
         // Moving the next component from In to the idle loader, or set the loader status to idle if the queue is empty.
         Component.serviceType currentService = evt.getComponent().getWhichService();
         Component movingI1Q = I1Q.poll();
+        Component movingI2Q = I2Q.poll();
         if (currentService == Component.serviceType.INSPECTOR1){
             if (!I1Q.isEmpty()) {
                 isI1Busy = true;
@@ -183,20 +184,15 @@ public class SimModel {
             }
         } else if (currentService == Component.serviceType.INSPECTOR2){
             if (!I2Q.isEmpty()) {
-                isI2Busy = True;
+                isI2Busy = true;
                 movingI2Q.setWhichService(Component.serviceType.INSPECTOR2);
             } else {
                 BI += Clock - LastI2IdleTime;
                 isI2Busy=false;
             }
         } else {
-            break;
+           // break;            // break only works if you are in a loop
         }
-    }
-
-    private static void ProcessEI(SimEvent evt){
-        System.out.print(" event = Component " + evt.getComponent().getID() + "leaves Inspector" + evt.getInspector().getID());
-        //if ()
     }
 
     private static void ProcessEW(SimEvent imminentEVT) {
