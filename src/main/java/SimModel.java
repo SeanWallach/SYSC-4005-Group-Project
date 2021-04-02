@@ -4,7 +4,7 @@ public class SimModel {
     // Declaration of Simulation Methods
 
     // Simulation Model Variables
-    public static int Clock;
+    public static int Clock, workdayHours, currentDay, simDays;
     public static Random RNGInspectionComponent1, RNGInspectionComponent2, RNGInspectionComponent3,RNGWorkstation1,RNGWorkstation2,RNGWorkstation3;      // Variables for random numbers generated for each event
     public static int LastI1IdleTime, LastI2IdleTime;
     private static Queue<SimEvent> FEL;                                             // This is the FEL
@@ -22,10 +22,6 @@ public class SimModel {
 
     private static double BI, BW;                                           // Total busy time for the two inspectors and the workstations, respectively
     private static double UI, UW;                                           // Utilization for the two inspectors and the workstations, respectively
-
-    public SimModel() {
-        Initialization();
-    }
 
     // According to milestone2 frequency list, generate random numbers for input
     private static Integer getRandomTime(double TD[][], Random RNV) {
@@ -50,15 +46,19 @@ public class SimModel {
         RNGWorkstation3 = new Random();
 
         Clock = 0;
+        currentDay = 1;
+        workdayHours = 8;
         LastI1IdleTime = 0;
         LastI2IdleTime = 0;
+        simDays = 10; // For now
 
         BI = 0.0;
         BW = 0.0;
         UI = 0.0;
         UW = 0.0;
 
-        FEL = new PriorityQueue<>();            // Initializing the FEL and waiting queues
+        // Initializing the FEL and waiting queues
+        FEL = new PriorityQueue<>();
         W1C1Q = new LinkedList<>();
         W2C1Q = new LinkedList<>();
         W2C2Q = new LinkedList<>();
@@ -97,6 +97,16 @@ public class SimModel {
     //
     public static void main(String [] args) {
         Initialization();
+        System.out.print("\n-----------------------------------------------------------\n");
+        System.out.print("Day " + currentDay +"\n");
+        while ((currentDay <= simDays) && !(FEL.isEmpty())) {
+            SimEvent imminentEVT = FEL.poll();
+            if (imminentEVT != null) {
+                Clock = imminentEVT.geteTime();
+                System.out.print("Clock = " + Clock);
+                ProcessSimEvent(imminentEVT);
+            }
+        }
         GenerateReport();
     }
 
@@ -224,7 +234,7 @@ public class SimModel {
     }
 
     // Processes events
-    private static void processSimEvent(SimEvent imminentEVT) {
+    private static void ProcessSimEvent(SimEvent imminentEVT) {
         System.out.print("Processing events...");
         switch (imminentEVT.geteType()) {
             case AI:
