@@ -11,7 +11,8 @@ public class SimModel {
     public static Queue<Component> W1C1Q, W2C1Q, W2C2Q, W3C1Q, W3C3Q,I1Q,I2Q;         // Queue lines for the buffer unit
     private static boolean isW1C1QBusy, isW2C1QBusy, isW2C2QBusy, isW3C1QBusy, isW3C3QBusy, isW1BUsy, isW2Busy, isW3Busy;
     private static boolean isI1Busy, isI2Busy;
-
+    private static Inspector INSPECTOR1, INSPECTOR2;
+    private static Workstation W1, W2, W3;
     // Inputs
     public static double[][] servinp1 = {{5,0.35},{15,0.78},{25,0.93},{50,0.99},{80,1}};
     public static double[][] servinp2 = {{5,0.22},{15,0.61},{25,0.81},{50,0.7},{115,1}};
@@ -68,18 +69,19 @@ public class SimModel {
         I2Q = new LinkedList<>();
       
         // Creating workstations
-        Workstation W1 = new Workstation(1);
-        Workstation W2 = new Workstation(2);
-        Workstation W3 = new Workstation(3);
+        W1 = new Workstation(1);
+        W2 = new Workstation(2);
+        W3 = new Workstation(3);
         // Creating Inspectors
-        Inspector INSPECTOR1 = new Inspector(1);
-        Inspector INSPECTOR2 = new Inspector(2);
-        // Creating Components
+        INSPECTOR1 = new Inspector(1);
+        INSPECTOR2 = new Inspector(2);
+
+        // Creating Initial Components
         Component component1 = new Component(1);
         Component component2 = new Component(2);
         Component component3 = new Component(3);
 
-        // set up any other initial settings here ;)
+        // set up any other initial settings here
         System.out.print("\n-----------------------------------------------------------\n");
         System.out.print("Initial state of the simulation\n");
         System.out.print("Component1 at Inspector1, but no components in the buffers yet.\n");
@@ -238,7 +240,10 @@ public class SimModel {
                 //newRN = getRandomTime();
         }
         checkSimDay(newRN);
-        SimEvent newEVT = new SimEvent(type,Clock+newRN, component, null);
+        if (component.getType() == 1) {
+            SimEvent newEVT = new SimEvent(type,Clock+newRN, component, inspector1);
+        }
+
         System.out.print(" => new event = " + newEVT.geteType() + " time " + newEVT.geteTime() + " Component type  " + newEVT.getComponent().getType());
         FEL.offer(newEVT);
     }
